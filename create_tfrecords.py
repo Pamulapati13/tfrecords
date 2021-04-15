@@ -33,6 +33,8 @@ class TFrecords_writer():
         return tf.train.Example(features=tf.train.Features(feature=feature_dict))
 
     def create_tfrecords_train(self):
+        if not os.path.exists(os.path.join(self.destination_loc, 'test_records')):
+            os.mkdir(os.path.join(self.destination_loc,'train_records'))
         print('The number of classes are: ' + str(len(os.listdir(self.train_images_loc))))
         nums = {}
         for i in os.listdir(self.train_images_loc):
@@ -44,10 +46,9 @@ class TFrecords_writer():
         if self.sharding:
             if self.compression is not None:
                 self.compression = tf.io.TFRecordOptions(compression_type=self.compression)
-            tfrecords_shard_path = self.destination_loc + '/{}.{}'.format('train','tfrecords')
             lbl = 0
             for cls in os.listdir(self.train_images_loc):
-                tfrecords_shard_path = self.destination_loc + '/{}.{}'.format(cls, 'tfrecords')
+                tfrecords_shard_path = self.destination_loc + '/train_records' + '/{}.{}'.format(cls, 'tfrecords')
                 with tf.io.TFRecordWriter(tfrecords_shard_path,options=self.compression) as writer:
                     for img in os.listdir(self.train_images_loc+'/'+cls):
                         img_loc = self.train_images_loc + '/' + cls + '/' + img
@@ -60,7 +61,7 @@ class TFrecords_writer():
         else:
             if self.compression is not None:
                 self.compression = tf.io.TFRecordOptions(compression_type=self.compression)
-            tfrecords_shard_path = self.destination_loc + '/{}.{}'.format('train','tfrecords')
+            tfrecords_shard_path = self.destination_loc + '/train_records' + '/{}.{}'.format('train','tfrecords')
             lbl = 0
             with tf.io.TFRecordWriter(tfrecords_shard_path,options=self.compression) as writer:
                 for cls in os.listdir(self.train_images_loc):
@@ -74,6 +75,8 @@ class TFrecords_writer():
 
     def create_tfrecords_test(self):
         nums = {}
+        if not os.path.exists(os.path.join(self.destination_loc, 'test_records')):
+            os.mkdir(os.path.join(self.destination_loc, 'test_records'))
         for i in os.listdir(self.test_images_loc):
             nums[i] = len(os.listdir(self.test_images_loc + '/' + i))
         print('Number of test images in each class.')
@@ -83,10 +86,9 @@ class TFrecords_writer():
         if self.sharding:
             if self.compression is not None:
                 self.compression = tf.io.TFRecordOptions(compression_type=self.compression)
-            tfrecords_shard_path = self.destination_loc + '/{}.{}'.format('test', 'tfrecords')
             lbl = 0
             for cls in os.listdir(self.test_images_loc):
-                tfrecords_shard_path = self.destination_loc + '/{}.{}'.format(cls, 'tfrecords')
+                tfrecords_shard_path = self.destination_loc + '/test_records' + '/{}.{}'.format(cls, 'tfrecords')
                 with tf.io.TFRecordWriter(tfrecords_shard_path, options=self.compression) as writer:
                     for img in os.listdir(self.test_images_loc + '/' + cls):
                         img_loc = self.test_images_loc + '/' + cls + '/' + img
@@ -99,7 +101,7 @@ class TFrecords_writer():
         else:
             if self.compression is not None:
                 self.compression = tf.io.TFRecordOptions(compression_type=self.compression)
-            tfrecords_shard_path = self.destination_loc + '/{}.{}'.format('test', 'tfrecords')
+            tfrecords_shard_path = self.destination_loc + '/test_records'+ '/{}.{}'.format('test', 'tfrecords')
             lbl = 0
             with tf.io.TFRecordWriter(tfrecords_shard_path, options=self.compression) as writer:
                 for cls in os.listdir(self.test_images_loc):

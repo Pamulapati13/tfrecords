@@ -28,7 +28,6 @@ class Tfrecord_reader():
             comp = 'tfrecords'
         else:
             comp = self.compression
-        print(self.tfrecord_path,comp)
         files_list = tf.data.Dataset.list_files('{}\*.{}'.format(self.tfrecord_path,comp))
         data = tf.data.TFRecordDataset(files_list, compression_type=self.compression)
         dataset = data.map(self.parser_func)
